@@ -17,7 +17,7 @@ export default class App extends Component {
             this.createTodoItem('Have a lunch')
         ],
         term: '',
-        filter: 'all'
+        filter: ''
     };
 
     createTodoItem(label) {
@@ -117,7 +117,6 @@ export default class App extends Component {
     render() {
         const {todoData, term, filter} = this.state;
         const visibleItems = this.search(todoData, term);
-        //console.log('visibleItems', visibleItems);
         const filteredItems = this.statusFilter(visibleItems, filter);
 
         const doneCount = todoData.filter((el) => el.done).length;
@@ -126,8 +125,13 @@ export default class App extends Component {
             <div className="todo-app">
                 <AppHeader toDo={todoCount} done={doneCount}/>
                 <div className="top-panel d-flex">
-                    <SearchPanel onSearchChange={this.onSearchChange}/>
-                    <ItemStatusFilter onStatusFilter={this.onStatusFilter}/>
+                    <SearchPanel
+                        onSearchChange={this.onSearchChange}
+                    />
+                    <ItemStatusFilter
+                        activeFilter={filter}
+                        onStatusFilter={this.onStatusFilter}
+                    />
                 </div>
                 <TodoList
                     todos={filteredItems}
