@@ -7,7 +7,6 @@ import ItemStatusFilter from '../item-status-filter';
 import './app.css';
 import ItemAddForm from "../item-add-form";
 
-
 export default class App extends Component {
     maxId = 100;
     state = {
@@ -28,7 +27,6 @@ export default class App extends Component {
             id: this.maxId++
         }
     }
-
     deleteItem = (id) => {
         this.setState(({todoData}) => {
             const idx = todoData.findIndex((el) => el.id === id);
@@ -57,7 +55,6 @@ export default class App extends Component {
         });
 
     };
-
     toggleProperty(arr, id, propName) {
         const idx = arr.findIndex((el) => el.id === id);
 
@@ -70,7 +67,6 @@ export default class App extends Component {
             ...arr.slice(idx + 1)
         ]
     }
-
     onToggleImportant = (id) => {
         this.setState(({todoData}) => {
             return {
@@ -78,7 +74,6 @@ export default class App extends Component {
             }
         });
     };
-
     onToggleDone = (id) => {
         this.setState(({todoData}) => {
             return {
@@ -86,7 +81,6 @@ export default class App extends Component {
             }
         });
     };
-
     search (items, term) {
         if (term.length === 0) {
             return items;
@@ -96,29 +90,29 @@ export default class App extends Component {
         })
     };
 
-    statusFilter(items, filter){
-        if(filter === 'done'){
-            return items.filter((item) => item.done);
-        }
-        if(filter === 'active'){
-            return items.filter((item) => !item.done);
-        }
-        return items;
-    }
-
+   filter(items, filter){
+       switch(filter){
+           case 'all':
+               return items;
+           case 'active':
+               return items.filter((item) => !item.done);
+           case 'done':
+               return items.filter((item) => item.done);
+           default:
+               return items;
+       }
+   }
     onSearchChange = (term) => {
         this.setState({term});
     };
 
-    onStatusFilter = (filter) => {
+    onFilterChange = (filter) => {
         this.setState({filter});
     };
 
     render() {
         const {todoData, term, filter} = this.state;
-        const visibleItems = this.search(todoData, term);
-        const filteredItems = this.statusFilter(visibleItems, filter);
-
+        const visibleItems = this.filter(this.search(todoData, term), filter);
         const doneCount = todoData.filter((el) => el.done).length;
         const todoCount = todoData.length - doneCount;
         return (
@@ -129,12 +123,12 @@ export default class App extends Component {
                         onSearchChange={this.onSearchChange}
                     />
                     <ItemStatusFilter
-                        activeFilter={filter}
-                        onStatusFilter={this.onStatusFilter}
+                        filter={filter}
+                        onFilterChange={this.onFilterChange}
                     />
                 </div>
                 <TodoList
-                    todos={filteredItems}
+                    todos={visibleItems}
                     onDeleted={this.deleteItem}
                     onToggleImportant={this.onToggleImportant}
                     onToggleDone={this.onToggleDone}
